@@ -53,19 +53,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const key = parseInt(cell.dataset.key);
         const trigger = parseInt(cell.dataset.trigger);
         const velocity = parseInt(cell.dataset.velocity);
-
+    
         if (key > 0 || trigger > 0) {
             cell.classList.remove('red');
             cell.classList.add('green');
-            cell.style.backgroundColor = `rgba(0, 255, 0, ${0.2 + 0.2 * velocity})`;
+            const greenValue = 0.5 + (0.5 * velocity / 4); // Calculate green value based on velocity
+            cell.style.backgroundColor = `rgba(0, 255, 0, ${greenValue})`;
         } else {
             cell.classList.remove('green');
             cell.classList.add('red');
             cell.style.backgroundColor = 'lightcoral';
         }
-
+    
         cell.textContent = Math.max(key, trigger);
     }
+
 
     keyInput.addEventListener('input', () => {
         if (currentCell) {
