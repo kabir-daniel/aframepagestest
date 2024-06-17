@@ -7,11 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const exportButton = document.getElementById('export');
 
     let currentCell = null;
+    let cols = 12; // Initial number of columns
 
     function createGrid(instrument, rows, cols) {
         const instrumentDiv = document.getElementById(instrument);
         const indexRow = instrumentDiv.querySelector('.index-row');
-        
+        indexRow.innerHTML = '';
+
         for (let i = 1; i <= cols; i++) {
             const cell = document.createElement('div');
             cell.classList.add('cell');
@@ -21,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const rowsDivs = instrumentDiv.querySelectorAll(`.row[data-instrument="${instrument}"]`);
         rowsDivs.forEach(row => {
+            row.innerHTML = ''; // Clear the existing cells
             for (let i = 1; i <= cols; i++) {
                 const cell = document.createElement('div');
                 cell.classList.add('cell', 'red');
@@ -41,10 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    createGrid('drum', 6, 12);
-    createGrid('bass', 1, 12);
-    createGrid('synth', 4, 12);
-    createGrid('lead', 1, 12);
+    createGrid('drum', 6, cols);
+    createGrid('bass', 1, cols);
+    createGrid('synth', 4, cols);
+    createGrid('lead', 1, cols);
 
     function updateCellColor(cell) {
         const key = parseInt(cell.dataset.key);
@@ -93,30 +96,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     add12Button.addEventListener('click', () => {
-        const instruments = ['drum', 'bass', 'synth', 'lead'];
-        instruments.forEach(instrument => {
-            const instrumentDiv = document.getElementById(instrument);
-            const rows = instrumentDiv.querySelectorAll(`.row[data-instrument="${instrument}"]`);
-            rows.forEach(row => {
-                for (let i = 0; i < 12; i++) {
-                    const cell = document.createElement('div');
-                    cell.classList.add('cell', 'red');
-                    cell.dataset.key = 0;
-                    cell.dataset.trigger = 0;
-                    cell.dataset.velocity = 0;
-                    cell.dataset.preset = 0;
-                    cell.textContent = '0';
-                    cell.addEventListener('click', () => {
-                        currentCell = cell;
-                        keyInput.value = cell.dataset.key;
-                        triggerInput.value = cell.dataset.trigger;
-                        velocityInput.value = cell.dataset.velocity;
-                        presetInput.value = cell.dataset.preset;
-                    });
-                    row.appendChild(cell);
-                }
-            });
-        });
+        cols += 12;
+        createGrid('drum', 6, cols);
+        createGrid('bass', 1, cols);
+        createGrid('synth', 4, cols);
+        createGrid('lead', 1, cols);
     });
 
     exportButton.addEventListener('click', () => {
