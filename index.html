@@ -3,25 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Grid</title>
+    <title>Interactive Color Grid</title>
     <style>
         body {
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             height: 100vh;
             margin: 0;
+            background-color: black;
+            color: white;
             font-family: Arial, sans-serif;
         }
 
         #grid-container {
             display: grid;
-            grid-template-columns: repeat(10, 100px);
-            grid-template-rows: repeat(10, 100px);
+            grid-template-columns: repeat(25, 100px);
+            grid-template-rows: repeat(3, 100px);
             gap: 1px;
-            overflow: hidden;
-            border: 1px solid #ccc;
         }
 
         .grid-item {
@@ -29,90 +28,68 @@
             align-items: center;
             justify-content: center;
             border: 1px solid #ccc;
-            background-color: #fff;
+            font-size: 16px;
             cursor: pointer;
-            box-sizing: border-box;
+            color: white;
         }
 
-        .grid-item input {
+        .grid-item[readonly] {
+            cursor: default;
+            background-color: #333;
+            color: white;
+        }
+
+        .color-box {
             width: 100%;
             height: 100%;
-            border: none;
-            text-align: center;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-
-        .grid-item input:focus {
-            outline: none;
-        }
-
-        .controls {
             display: flex;
-            flex-direction: column;
-            position: fixed;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .controls button {
-            margin: 5px;
-            padding: 10px;
-            font-size: 16px;
-            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
         }
     </style>
 </head>
 <body>
-    <div class="controls">
-        <button onclick="scrollGrid('up')">Up</button>
-        <button onclick="scrollGrid('down')">Down</button>
-        <button onclick="scrollGrid('left')">Left</button>
-        <button onclick="scrollGrid('right')">Right</button>
+    <div id="grid-container">
+        <div class="grid-item" readonly>Trigger</div>
+        <div class="grid-item" readonly>Velocity</div>
+        <div class="grid-item" readonly>Preset</div>
+        <div class="grid-item color-box" data-value="0" style="background-color: red;">0</div>
+        <div class="grid-item color-box" data-value="0" style="background-color: red;">0</div>
+        <div class="grid-item color-box" data-value="1" style="background-color: green;">0</div>
+        <div class="grid-item color-box" data-value="1" style="background-color: green;">0</div>
+        <!-- Repeat similar grid items for the rest of the columns in the first row -->
+
+        <div class="grid-item color-box" data-value="0" style="background-color: darkred;">0</div>
+        <div class="grid-item color-box" data-value="0" style="background-color: darkred;">0</div>
+        <!-- Repeat similar grid items for the rest of the columns in the second row -->
+
+        <div class="grid-item color-box" data-value="0" style="background-color: brown;">0</div>
+        <div class="grid-item color-box" data-value="0" style="background-color: brown;">0</div>
+        <!-- Repeat similar grid items for the rest of the columns in the third row -->
     </div>
-    <div id="grid-container"></div>
 
     <script>
-        function createGrid(rows, cols) {
-            const container = document.getElementById('grid-container');
-            container.style.gridTemplateColumns = `repeat(${cols}, 100px)`;
-            container.style.gridTemplateRows = `repeat(${rows}, 100px)`;
+        function getColor(row, value) {
+            const colorMap = [
+                ["red", "green"],
+                ["darkred", "red", "tomato", "orangered", "firebrick"],
+                ["brown", "grey", "dullyellow", "yellow", "purple", "blue", "orange", "white"]
+            ];
 
-            for (let i = 0; i < rows * cols; i++) {
-                const gridItem = document.createElement('div');
-                gridItem.className = 'grid-item';
-                const input = document.createElement('input');
-                gridItem.appendChild(input);
-                container.appendChild(gridItem);
-            }
+            return colorMap[row][value];
         }
 
-        function scrollGrid(direction) {
-            const container = document.getElementById('grid-container');
-            const currentScroll = {
-                top: container.scrollTop,
-                left: container.scrollLeft
-            };
-            const scrollAmount = 100;
-
-            switch (direction) {
-                case 'up':
-                    container.scrollTo(currentScroll.left, currentScroll.top - scrollAmount);
-                    break;
-                case 'down':
-                    container.scrollTo(currentScroll.left, currentScroll.top + scrollAmount);
-                    break;
-                case 'left':
-                    container.scrollTo(currentScroll.left - scrollAmount, currentScroll.top);
-                    break;
-                case 'right':
-                    container.scrollTo(currentScroll.left + scrollAmount, currentScroll.top);
-                    break;
-            }
-        }
-
-        createGrid(50, 50); // Initialize a 50x50 grid
+        document.querySelectorAll('.color-box').forEach(item => {
+            item.addEventListener('click', () => {
+                let value = parseInt(item.getAttribute('data-value'));
+                let row = Array.from(item.parentNode.children).indexOf(item) % 3;
+                value = (value + 1) % (row === 0 ? 2 : (row === 1 ? 5 : 8));
+                item.setAttribute('data-value', value);
+                item.textContent = value;
+                item.style.backgroundColor = getColor(row, value);
+            });
+        });
     </script>
 </body>
 </html>
