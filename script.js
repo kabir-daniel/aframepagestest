@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const presetInput = document.getElementById('preset');
     const add12Button = document.getElementById('add12');
     const exportButton = document.getElementById('export');
+    const saveButton = document.getElementById('save');
+    const loadButton = document.getElementById('load');
+    const loadFileInput = document.getElementById('loadFile');
+    const songNameInput = document.getElementById('songName');
 
     let currentCell = null;
     let cols = 12; // Initial number of columns
@@ -170,6 +174,74 @@ document.addEventListener('DOMContentLoaded', () => {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+    });
+
+    saveButton.addEventListener('click', () => {
+        const songName = songNameInput.value.trim();
+        if (!songName) {
+            alert('Please enter a song name.');
+            return;
+        }
+
+        const instruments = ['drum', 'bass', 'synth', 'lead'];
+        let saveData = {};
+
+        instruments.forEach(instrument => {
+            saveData[instrument] = [];
+            const instrumentDiv = document.getElementById(instrument);
+            const rowDivs = instrumentDiv.querySelectorAll(`.row[data-instrument="${instrument}"]`);
+            rowDivs.forEach(row => {
+                const rowData = Array.from(row.querySelectorAll('.cell')).map(cell => ({
+                    key: parseInt(cell.dataset.key),
+                    trigger: parseInt(cell.dataset.trigger),
+                    velocity: parseInt(cell.dataset.velocity),
+                    preset: parseInt(cell.dataset.preset)
+                }));
+                saveData[instrument].push(rowData);
+            });
+        });
+
+        const blob = new Blob([JSON.stringify(saveData)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${songName}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+
+    loadButton.addEventListener('click', () => {
+        loadFileInput.click();
+    });
+
+    loadFileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const data = JSON.parse(e.target.result);
+
+            Object.keys(data).forEach(instrument => {
+                const instrumentDiv = document.getElementById(instrument);
+                const rowDivs = instrumentDiv.querySelectorAll(`.row[data-instrument="${instrument}"]`);
+
+                rowDivs.forEach((row, rowIndex) => {
+                    const rowData = data[instrument][rowIndex];
+                    row.querySelectorAll('.cell').forEach((cell, cellIndex) => {
+                        const cellData = rowData[cellIndex];
+                        cell.dataset.key = cellData.key;
+                        cell.dataset.trigger = cellData.trigger;
+                        cell.dataset.velocity = cellData.velocity;
+                        cell.dataset.preset = cellData.preset;
+                        updateCellColor(cell);
+                    });
+                });
+            });
+        };
+        reader.readAsText(file);
     });
 
     // Add event listeners for keyboard shortcuts
