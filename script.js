@@ -171,4 +171,15 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     });
+
+    document.addEventListener('keydown', (event) => {
+        if (currentCell) {
+            if (event.key === 'q') {
+                triggerInput.click();
+            } else if (event.key === 'w') {
+                velocityInput.click();
+            } else if (event.key === 'e') {
+                presetInput.click();
+            }
+        });
 });
