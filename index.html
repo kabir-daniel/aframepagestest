@@ -13,6 +13,26 @@
             flex-direction: column;
             align-items: center;
         }
+        .hud {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            z-index: 10;
+        }
+        .hud button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .tracks {
+            margin-top: 60px; /* To offset the HUD height */
+            width: 100%;
+        }
         .track {
             display: flex;
             margin: 10px 0;
@@ -27,9 +47,10 @@
         .midi-roll {
             flex-grow: 1;
             display: grid;
-            grid-template-columns: repeat(16, 1fr);
+            grid-template-columns: repeat(12, 1fr);
             grid-gap: 1px;
             background-color: #ccc;
+            overflow-x: auto;
         }
         .midi-cell {
             width: 40px;
@@ -40,23 +61,48 @@
         .midi-cell.active {
             background-color: #4caf50;
         }
+        @media (max-width: 600px) {
+            .track-name {
+                width: 80px;
+                font-size: 14px;
+            }
+            .midi-cell {
+                width: 30px;
+                height: 20px;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Basic DAW</h1>
-    <div class="track">
-        <div class="track-name">Track 1</div>
-        <div class="midi-roll" id="midi-roll-1"></div>
+    <div class="hud">
+        <button id="add12">Add 12</button>
+        <button id="export">Export</button>
     </div>
-    <div class="track">
-        <div class="track-name">Track 2</div>
-        <div class="midi-roll" id="midi-roll-2"></div>
+    <div class="tracks">
+        <div class="track">
+            <div class="track-name">Drum</div>
+            <div class="midi-roll" id="midi-roll-drum"></div>
+        </div>
+        <div class="track">
+            <div class="track-name">Bass</div>
+            <div class="midi-roll" id="midi-roll-bass"></div>
+        </div>
+        <div class="track">
+            <div class="track-name">Piano</div>
+            <div class="midi-roll" id="midi-roll-piano"></div>
+        </div>
+        <div class="track">
+            <div class="track-name">Lead</div>
+            <div class="midi-roll" id="midi-roll-lead"></div>
+        </div>
     </div>
 
     <script>
-        function createMidiRoll(midiRollId) {
+        function createMidiRoll(midiRollId, columns = 12) {
             const midiRoll = document.getElementById(midiRollId);
-            for (let i = 0; i < 128; i++) {
+            midiRoll.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+            midiRoll.innerHTML = ''; // Clear existing cells
+            for (let i = 0; i < columns * 10; i++) { // 10 rows
                 const cell = document.createElement('div');
                 cell.classList.add('midi-cell');
                 cell.addEventListener('click', () => {
@@ -66,8 +112,51 @@
             }
         }
 
-        createMidiRoll('midi-roll-1');
-        createMidiRoll('midi-roll-2');
+        function add12Columns() {
+            createMidiRoll('midi-roll-drum', getColumnCount('midi-roll-drum') + 12);
+            createMidiRoll('midi-roll-bass', getColumnCount('midi-roll-bass') + 12);
+            createMidiRoll('midi-roll-piano', getColumnCount('midi-roll-piano') + 12);
+            createMidiRoll('midi-roll-lead', getColumnCount('midi-roll-lead') + 12);
+        }
+
+        function getColumnCount(midiRollId) {
+            const midiRoll = document.getElementById(midiRollId);
+            return midiRoll.children.length / 10; // Assuming 10 rows
+        }
+
+        function exportData() {
+            const data = {
+                drum: exportTrack('midi-roll-drum'),
+                bass: exportTrack('midi-roll-bass'),
+                piano: exportTrack('midi-roll-piano'),
+                lead: exportTrack('midi-roll-lead')
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'daw_data.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportTrack(midiRollId) {
+            const midiRoll = document.getElementById(midiRollId);
+            const cells = midiRoll.children;
+            const trackData = [];
+            for (let i = 0; i < cells.length; i++) {
+                trackData.push(cells[i].classList.contains('active') ? 1 : 0);
+            }
+            return trackData;
+        }
+
+        document.getElementById('add12').addEventListener('click', add12Columns);
+        document.getElementById('export').addEventListener('click', exportData);
+
+        createMidiRoll('midi-roll-drum');
+        createMidiRoll('midi-roll-bass');
+        createMidiRoll('midi-roll-piano');
+        createMidiRoll('midi-roll-lead');
     </script>
 </body>
 </html>
