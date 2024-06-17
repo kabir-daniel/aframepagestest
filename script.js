@@ -97,10 +97,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     add12Button.addEventListener('click', () => {
         cols += 12;
-        createGrid('drum', 6, cols);
-        createGrid('bass', 1, cols);
-        createGrid('synth', 4, cols);
-        createGrid('lead', 1, cols);
+
+        const instruments = ['drum', 'bass', 'synth', 'lead'];
+        instruments.forEach(instrument => {
+            const instrumentDiv = document.getElementById(instrument);
+            const indexRow = instrumentDiv.querySelector('.index-row');
+
+            // Add new index cells
+            for (let i = indexRow.children.length + 1; i <= cols; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.textContent = i;
+                indexRow.appendChild(cell);
+            }
+
+            const rows = instrumentDiv.querySelectorAll(`.row[data-instrument="${instrument}"]`);
+            rows.forEach(row => {
+                const existingCells = row.children.length;
+
+                // Add new cells to each row
+                for (let i = existingCells + 1; i <= cols; i++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell', 'red');
+                    cell.dataset.key = 0;
+                    cell.dataset.trigger = 0;
+                    cell.dataset.velocity = 0;
+                    cell.dataset.preset = 0;
+                    cell.textContent = '0';
+                    cell.addEventListener('click', () => {
+                        currentCell = cell;
+                        keyInput.value = cell.dataset.key;
+                        triggerInput.value = cell.dataset.trigger;
+                        velocityInput.value = cell.dataset.velocity;
+                        presetInput.value = cell.dataset.preset;
+                    });
+                    row.appendChild(cell);
+                }
+            });
+        });
     });
 
     exportButton.addEventListener('click', () => {
