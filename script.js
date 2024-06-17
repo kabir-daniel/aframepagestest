@@ -172,6 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         URL.revokeObjectURL(url);
     });
 
+    // Add event listeners for keyboard shortcuts
     document.addEventListener('keydown', (event) => {
         if (currentCell) {
             if (event.key === 'q') {
@@ -181,5 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (event.key === 'e') {
                 presetInput.click();
             }
-        });
+        }
+    });
 });
