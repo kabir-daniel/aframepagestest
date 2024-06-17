@@ -1,73 +1,81 @@
-body, html {
+body {
     margin: 0;
-    padding: 0;
-    box-sizing: border-box;
     font-family: Arial, sans-serif;
-    background-color: black;
-    color: white;
+    background-color: #121212;
+    color: #ffffff;
+    overflow: hidden;
 }
 
-.top-bar {
+.top-bar, .bottom-bar {
     position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
-    background-color: #333;
-    color: #fff;
+    background-color: #1e1e1e;
     padding: 10px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    z-index: 10;
 }
 
-.top-bar input {
-    width: 15%;
-    padding: 5px;
-    margin: 0 5px;
+.top-bar {
+    top: 0;
 }
 
-.top-bar button {
-    padding: 5px 10px;
-    margin: 0 5px;
+.bottom-bar {
+    bottom: 0;
 }
 
-.scrollable {
-    margin-top: 60px;
-    overflow-y: scroll;
-    height: calc(100vh - 60px);
+.tracks-region {
+    position: absolute;
+    top: 60px; /* Adjust this value if needed to match the height of the top bar */
+    bottom: 60px; /* Adjust this value if needed to match the height of the bottom bar */
+    left: 0;
+    right: 0;
     padding: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
 }
 
-.instrument {
+.track {
     margin-bottom: 20px;
 }
 
-.instrument h2 {
+.track h3 {
     margin: 0 0 10px 0;
-    padding: 0;
 }
 
-.row {
+.grid {
+    display: grid;
+    grid-template-columns: repeat(12, 30px);
+    gap: 2px;
+}
+
+.grid div {
+    width: 30px;
+    height: 30px;
     display: flex;
-}
-
-.cell {
-    width: calc(100% / 12);
-    border: 1px solid #ccc;
-    padding: 20px;
-    text-align: center;
+    justify-content: center;
+    align-items: center;
+    background-color: red;
+    color: white;
     cursor: pointer;
 }
 
-.index-row .cell {
-    background-color: #eee;
-    cursor: default;
-    color: black;
+.grid div.active {
+    background-color: green;
 }
 
-.cell.green {
-    background-color: lightgreen;
+.info {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
 }
 
-.cell.red {
-    background-color: lightcoral;
+.info > div {
+    margin: 0 5px;
+}
+
+.info input {
+    width: 50px;
 }
