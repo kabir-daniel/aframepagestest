@@ -46,7 +46,6 @@ body, html {
 }
 
 .instrument {
-    height: calc(100vh / 4 - 10px); /* Each instrument takes up one-fourth of the screen height */
 }
 
 .row {
@@ -61,12 +60,13 @@ body, html {
     padding: 5px;
     text-align: center;
     cursor: pointer;
-    box-sizing: border-box; /* Ensure padding and border are included in the width */
+    
 }
 
 .index-row .cell {
     background-color: #444;
     cursor: default;
+    width: 50px;
     height: 30px; /* Match height of other cells */
     font-size: 0.8em; /* Reduce font size if necessary */
 }
