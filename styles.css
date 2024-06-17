@@ -52,7 +52,7 @@ body, html {
 }
 
 .cell {
-    width: 50px; /* Fixed width for cells */
+    min-width: 50px; /* Fixed width for cells */
     height: 30px; /* Adjust height for better ergonomics on mobile */
     border: 1px solid #ccc;
     padding: 5px;
