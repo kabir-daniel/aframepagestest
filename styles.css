@@ -36,8 +36,6 @@ body, html {
 .scrollable {
     margin-right: 80px; /* Account for the sidebar width */
     padding: 10px;
-    height: calc(100vh - 20px);
-    overflow-y: auto; /* Vertical scrolling */
 }
 
 .instrument {
