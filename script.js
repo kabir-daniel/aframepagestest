@@ -23,8 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const rowsDivs = instrumentDiv.querySelectorAll(`.row[data-instrument="${instrument}"]`);
         rowsDivs.forEach(row => {
-            row.innerHTML = ''; // Clear the existing cells
-            for (let i = 1; i <= cols; i++) {
+            const existingCells = row.children.length;
+            for (let i = existingCells + 1; i <= cols; i++) {
                 const cell = document.createElement('div');
                 cell.classList.add('cell', 'red');
                 cell.dataset.key = 0;
