@@ -1,0 +1,67 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: #ffffff;
+}
+
+.top-bar, .bottom-bar {
+    position: fixed;
+    width: 100%;
+    background-color: #1e1e1e;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+}
+
+.top-bar {
+    top: 0;
+}
+
+.bottom-bar {
+    bottom: 0;
+}
+
+.tracks-region {
+    padding: 60px 10px 60px 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.track {
+    margin-bottom: 20px;
+}
+
+.track h3 {
+    margin: 0 0 10px 0;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(12, 30px);
+    gap: 2px;
+}
+
+.grid div {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: red;
+    color: white;
+    cursor: pointer;
+}
+
+.grid div.active {
+    background-color: green;
+}
+
+.info {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
