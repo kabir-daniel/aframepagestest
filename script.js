@@ -9,9 +9,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadButton = document.getElementById('load');
     const loadFileInput = document.getElementById('loadFile');
     const songNameInput = document.getElementById('songName');
+    const copyButton = document.getElementById('copy');
+    const pasteButton = document.getElementById('paste');
+    const deselectButton = document.getElementById('deselect');
 
     let currentCell = null;
     let cols = 12; // Initial number of columns
+    let selectionStartIndex = null;
+    let selectionEndIndex = null;
+    let copiedData = [];
 
     function createGrid(instrument, rows, cols) {
         const instrumentDiv = document.getElementById(instrument);
@@ -22,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const cell = document.createElement('div');
             cell.classList.add('cell');
             cell.textContent = i;
+            cell.addEventListener('click', () => handleIndexClick(instrument, i));
             indexRow.appendChild(cell);
         }
 
@@ -116,6 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const cell = document.createElement('div');
                 cell.classList.add('cell');
                 cell.textContent = i;
+                cell.addEventListener('click', () => handleIndexClick(instrument, i));
                 indexRow.appendChild(cell);
             }
 
@@ -242,6 +250,119 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
         reader.readAsText(file);
+    });
+
+    function handleIndexClick(instrument, index) {
+        const instrumentDiv = document.getElementById(instrument);
+        const indexRow = instrumentDiv.querySelector('.index-row');
+        const cells = Array.from(indexRow.children);
+        const currentCell = cells[index - 1];
+
+        if (!selectionStartIndex) {
+            selectionStartIndex = index;
+            currentCell.style.backgroundColor = 'darkgoldenrod';
+        } else if (!selectionEndIndex) {
+            selectionEndIndex = index;
+            const start = Math.min(selectionStartIndex, selectionEndIndex);
+            const end = Math.max(selectionStartIndex, selectionEndIndex);
+
+            for (let i = start - 1; i < end; i++) {
+                cells[i].style.backgroundColor = 'darkgoldenrod';
+            }
+
+            selectCells(instrument, start, end);
+        }
+    }
+
+    function selectCells(instrument, start, end) {
+        const instrumentDiv = document.getElementById(instrument);
+        const rows = instrumentDiv.querySelectorAll(`.row[data-instrument="${instrument}"]`);
+        
+        rows.forEach(row => {
+            for (let i = start - 1; i < end; i++) {
+                row.children[i].classList.add('selected');
+            }
+        });
+    }
+
+    deselectButton.addEventListener('click', () => {
+        const instruments = ['drum', 'bass', 'synth', 'lead'];
+        instruments.forEach(instrument => {
+            const instrumentDiv = document.getElementById(instrument);
+            const indexRow = instrumentDiv.querySelector('.index-row');
+            const cells = Array.from(indexRow.children);
+
+            cells.forEach(cell => {
+                cell.style.backgroundColor = '#444';
+            });
+
+            const rows = instrumentDiv.querySelectorAll(`.row[data-instrument="${instrument}"]`);
+            rows.forEach(row => {
+                Array.from(row.children).forEach(cell => {
+                    cell.classList.remove('selected');
+                });
+            });
+        });
+
+        selectionStartIndex = null;
+        selectionEndIndex = null;
+    });
+
+    copyButton.addEventListener('click', () => {
+        if (!selectionStartIndex || !selectionEndIndex) return;
+
+        const instruments = ['drum', 'bass', 'synth', 'lead'];
+        const instrument = instruments.find(inst => {
+            const instrumentDiv = document.getElementById(inst);
+            return instrumentDiv.querySelector('.index-row .cell:nth-child(' + selectionStartIndex + ')').style.backgroundColor === 'darkgoldenrod';
+        });
+
+        if (!instrument) return;
+
+        const instrumentDiv = document.getElementById(instrument);
+        const rows = instrumentDiv.querySelectorAll(`.row[data-instrument="${instrument}"]`);
+        const start = Math.min(selectionStartIndex, selectionEndIndex) - 1;
+        const end = Math.max(selectionStartIndex, selectionEndIndex);
+
+        copiedData = [];
+
+        rows.forEach(row => {
+            const rowData = Array.from(row.children).slice(start, end).map(cell => ({
+                key: parseInt(cell.dataset.key),
+                trigger: parseInt(cell.dataset.trigger),
+                velocity: parseInt(cell.dataset.velocity),
+                preset: parseInt(cell.dataset.preset)
+            }));
+            copiedData.push(rowData);
+        });
+    });
+
+    pasteButton.addEventListener('click', () => {
+        if (!selectionStartIndex || copiedData.length === 0) return;
+
+        const instruments = ['drum', 'bass', 'synth', 'lead'];
+        const instrument = instruments.find(inst => {
+            const instrumentDiv = document.getElementById(inst);
+            return instrumentDiv.querySelector('.index-row .cell:nth-child(' + selectionStartIndex + ')').style.backgroundColor === 'darkgoldenrod';
+        });
+
+        if (!instrument) return;
+
+        const instrumentDiv = document.getElementById(instrument);
+        const rows = instrumentDiv.querySelectorAll(`.row[data-instrument="${instrument}"]`);
+        const start = selectionStartIndex - 1;
+
+        rows.forEach((row, rowIndex) => {
+            const rowData = copiedData[rowIndex];
+            rowData.forEach((data, dataIndex) => {
+                const cell = row.children[start + dataIndex];
+                cell.dataset.key = data.key;
+                cell.dataset.trigger = data.trigger;
+                cell.dataset.velocity = data.velocity;
+                cell.dataset.preset = data.preset;
+                updateCellColor(cell);
+            });
+        });
     });
 
     // Add event listeners for keyboard shortcuts
