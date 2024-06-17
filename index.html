@@ -3,25 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Squares</title>
+    <title>Interactive Space</title>
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            overflow: hidden;
+            background-color: grey;
         }
-        .container {
-            display: flex;
-            gap: 10px;
+        canvas {
+            display: block;
+            background-color: grey;
         }
         .square {
+            position: absolute;
             width: 100px;
             height: 100px;
             background-color: blue;
-            cursor: pointer;
         }
         .selected {
             background-color: yellow !important;
@@ -29,23 +26,82 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="square" onclick="selectSquare(this)"></div>
-        <div class="square" onclick="selectSquare(this)"></div>
-        <div class="square" onclick="selectSquare(this)"></div>
-        <div class="square" onclick="selectSquare(this)"></div>
-    </div>
+    <canvas id="gameCanvas"></canvas>
 
     <script>
-        function selectSquare(element) {
-            const squares = document.querySelectorAll('.square');
-            squares.forEach(square => {
-                square.classList.remove('selected');
-                square.style.backgroundColor = 'blue';
-            });
-            element.classList.add('selected');
-            element.style.backgroundColor = 'yellow';
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let player = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            size: 20,
+            color: 'red',
+            speed: 5
+        };
+
+        const squares = [
+            { x: 100, y: 100, width: 100, height: 100, color: 'blue' },
+            { x: 300, y: 100, width: 100, height: 100, color: 'blue' },
+            { x: 500, y: 100, width: 100, height: 100, color: 'blue' },
+            { x: 700, y: 100, width: 100, height: 100, color: 'blue' }
+        ];
+
+        function drawPlayer() {
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x, player.y, player.size, player.size);
         }
+
+        function drawSquares() {
+            squares.forEach(square => {
+                ctx.fillStyle = square.color;
+                ctx.fillRect(square.x, square.y, square.width, square.height);
+            });
+        }
+
+        function movePlayer() {
+            if (keys['ArrowUp'] && player.y > 0) player.y -= player.speed;
+            if (keys['ArrowDown'] && player.y < canvas.height - player.size) player.y += player.speed;
+            if (keys['ArrowLeft'] && player.x > 0) player.x -= player.speed;
+            if (keys['ArrowRight'] && player.x < canvas.width - player.size) player.x += player.speed;
+        }
+
+        function checkCollision() {
+            squares.forEach(square => {
+                if (
+                    player.x < square.x + square.width &&
+                    player.x + player.size > square.x &&
+                    player.y < square.y + square.height &&
+                    player.y + player.size > square.y
+                ) {
+                    squares.forEach(sq => sq.color = 'blue');
+                    square.color = 'yellow';
+                }
+            });
+        }
+
+        let keys = {};
+
+        window.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+        });
+
+        window.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            movePlayer();
+            drawPlayer();
+            drawSquares();
+            checkCollision();
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
     </script>
 </body>
 </html>
