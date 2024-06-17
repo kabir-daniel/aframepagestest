@@ -1,107 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Space</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background-color: grey;
-        }
-        canvas {
-            display: block;
-            background-color: grey;
-        }
-        .square {
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            background-color: blue;
-        }
-        .selected {
-            background-color: yellow !important;
-        }
-    </style>
-</head>
-<body>
-    <canvas id="gameCanvas"></canvas>
+    <title>A-Frame Interactive Scene</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  </head>
+  <body>
+    <a-scene>
+      <a-assets>
+        <a-mixin id="square" geometry="primitive: box; height: 1; width: 1; depth: 1" material="color: blue"></a-mixin>
+        <a-mixin id="selected" material="color: yellow"></a-mixin>
+      </a-assets>
 
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+      <!-- Camera and Cursor -->
+      <a-entity id="camera" camera look-controls position="0 1.6 5">
+        <a-entity
+          cursor="fuse: false; rayOrigin: mouse"
+          position="0 0 -1"
+          geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+          material="color: black; shader: flat"
+        ></a-entity>
+      </a-entity>
 
-        let player = {
-            x: canvas.width / 2,
-            y: canvas.height / 2,
-            size: 20,
-            color: 'red',
-            speed: 5
-        };
+      <!-- Squares -->
+      <a-entity mixin="square" position="-1 1 0" class="clickable"></a-entity>
+      <a-entity mixin="square" position="1 1 0" class="clickable"></a-entity>
+      <a-entity mixin="square" position="-1 -1 0" class="clickable"></a-entity>
+      <a-entity mixin="square" position="1 -1 0" class="clickable"></a-entity>
 
-        const squares = [
-            { x: 100, y: 100, width: 100, height: 100, color: 'blue' },
-            { x: 300, y: 100, width: 100, height: 100, color: 'blue' },
-            { x: 500, y: 100, width: 100, height: 100, color: 'blue' },
-            { x: 700, y: 100, width: 100, height: 100, color: 'blue' }
-        ];
+      <!-- Zoom Buttons -->
+      <a-entity id="zoom-in" geometry="primitive: plane; height: 0.5; width: 0.5" material="color: green" position="-2 3 -2" text="value: Zoom In; color: white" class="clickable"></a-entity>
+      <a-entity id="zoom-out" geometry="primitive: plane; height: 0.5; width: 0.5" material="color: red" position="-2 2 -2" text="value: Zoom Out; color: white" class="clickable"></a-entity>
 
-        function drawPlayer() {
-            ctx.fillStyle = player.color;
-            ctx.fillRect(player.x, player.y, player.size, player.size);
-        }
-
-        function drawSquares() {
-            squares.forEach(square => {
-                ctx.fillStyle = square.color;
-                ctx.fillRect(square.x, square.y, square.width, square.height);
+      <script>
+        // A-Frame scene
+        document.querySelectorAll('.clickable').forEach((entity) => {
+          entity.addEventListener('click', function () {
+            document.querySelectorAll('.clickable').forEach((el) => {
+              el.removeAttribute('mixin');
+              el.setAttribute('mixin', 'square');
             });
-        }
-
-        function movePlayer() {
-            if (keys['ArrowUp'] && player.y > 0) player.y -= player.speed;
-            if (keys['ArrowDown'] && player.y < canvas.height - player.size) player.y += player.speed;
-            if (keys['ArrowLeft'] && player.x > 0) player.x -= player.speed;
-            if (keys['ArrowRight'] && player.x < canvas.width - player.size) player.x += player.speed;
-        }
-
-        function checkCollision() {
-            squares.forEach(square => {
-                if (
-                    player.x < square.x + square.width &&
-                    player.x + player.size > square.x &&
-                    player.y < square.y + square.height &&
-                    player.y + player.size > square.y
-                ) {
-                    squares.forEach(sq => sq.color = 'blue');
-                    square.color = 'yellow';
-                }
-            });
-        }
-
-        let keys = {};
-
-        window.addEventListener('keydown', (e) => {
-            keys[e.key] = true;
+            this.setAttribute('mixin', 'selected');
+          });
         });
 
-        window.addEventListener('keyup', (e) => {
-            keys[e.key] = false;
+        const camera = document.getElementById('camera');
+        const zoomInButton = document.getElementById('zoom-in');
+        const zoomOutButton = document.getElementById('zoom-out');
+
+        zoomInButton.addEventListener('click', () => {
+          const position = camera.getAttribute('position');
+          if (position.z > 2) {
+            camera.setAttribute('position', { x: position.x, y: position.y, z: position.z - 1 });
+          }
         });
 
-        function gameLoop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            movePlayer();
-            drawPlayer();
-            drawSquares();
-            checkCollision();
-            requestAnimationFrame(gameLoop);
-        }
-
-        gameLoop();
-    </script>
-</body>
+        zoomOutButton.addEventListener('click', () => {
+          const position = camera.getAttribute('position');
+          camera.setAttribute('position', { x: position.x, y: position.y, z: position.z + 1 });
+        });
+      </script>
+    </a-scene>
+  </body>
 </html>
