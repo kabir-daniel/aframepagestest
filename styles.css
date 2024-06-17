@@ -9,7 +9,7 @@ body, html {
 
 .top-bar {
     position: fixed;
-    top: 50%; /* Move top bar down halfway */
+    top: 70%; /* Move top bar down halfway */
     transform: translateY(-50%); /* Center vertically */
     right: 0; /* Move top bar to the right side */
     width: 60px; /* Width to fit buttons and narrow text boxes */
