@@ -1,153 +1,103 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const keyInput = document.getElementById('key');
-    const triggerInput = document.getElementById('trigger');
-    const velocityInput = document.getElementById('velocity');
-    const presetInput = document.getElementById('preset');
-    const add12Button = document.getElementById('add12');
-    const exportButton = document.getElementById('export');
+document.addEventListener('DOMContentLoaded', function() {
+    const tracks = {
+        drum: { rows: 6, data: [] },
+        bass: { rows: 1, data: [] },
+        keys: { rows: 4, data: [] },
+        lead: { rows: 1, data: [] }
+    };
 
-    let currentCell = null;
+    function createTrack(track, rows) {
+        const trackElement = document.getElementById(`${track}-track`);
+        const grid = document.createElement('div');
+        grid.classList.add('grid');
+        grid.setAttribute('data-track', track);
 
-    function createGrid(instrument, rows, cols) {
-        const instrumentDiv = document.getElementById(instrument);
-        const indexRow = instrumentDiv.querySelector('.index-row');
-        
-        for (let i = 1; i <= cols; i++) {
+        for (let i = 0; i < rows * 12; i++) {
             const cell = document.createElement('div');
-            cell.classList.add('cell');
-            cell.textContent = i;
-            indexRow.appendChild(cell);
+            cell.setAttribute('data-index', i);
+            cell.textContent = '0';
+            cell.addEventListener('click', () => handleCellClick(track, i, cell));
+            grid.appendChild(cell);
         }
 
-        const rowsDivs = instrumentDiv.querySelectorAll(`.row[data-instrument="${instrument}"]`);
-        rowsDivs.forEach(row => {
-            for (let i = 1; i <= cols; i++) {
-                const cell = document.createElement('div');
-                cell.classList.add('cell', 'red');
-                cell.dataset.key = 0;
-                cell.dataset.trigger = 0;
-                cell.dataset.velocity = 0;
-                cell.dataset.preset = 0;
-                cell.textContent = '0';
-                cell.addEventListener('click', () => {
-                    currentCell = cell;
-                    keyInput.value = cell.dataset.key;
-                    triggerInput.value = cell.dataset.trigger;
-                    velocityInput.value = cell.dataset.velocity;
-                    presetInput.value = cell.dataset.preset;
-                });
-                row.appendChild(cell);
-            }
-        });
+        trackElement.appendChild(grid);
+        initializeTrackData(track, rows);
     }
 
-    createGrid('drum', 6, 12);
-    createGrid('bass', 1, 12);
-    createGrid('synth', 4, 12);
-    createGrid('lead', 1, 12);
-
-    function updateCellColor(cell) {
-        const key = parseInt(cell.dataset.key);
-        const trigger = parseInt(cell.dataset.trigger);
-        const velocity = parseInt(cell.dataset.velocity);
-
-        if (key > 0 || trigger > 0) {
-            cell.classList.remove('red');
-            cell.classList.add('green');
-            cell.style.backgroundColor = `rgba(0, 255, 0, ${0.2 + 0.2 * velocity})`;
-        } else {
-            cell.classList.remove('green');
-            cell.classList.add('red');
-            cell.style.backgroundColor = 'lightcoral';
-        }
-
-        cell.textContent = Math.max(key, trigger);
+    function initializeTrackData(track, rows) {
+        tracks[track].data = Array(rows).fill(null).map(() => Array(12).fill([0, 0, 0]));
     }
 
-    keyInput.addEventListener('input', () => {
-        if (currentCell) {
-            currentCell.dataset.key = keyInput.value;
-            updateCellColor(currentCell);
-        }
-    });
+    function handleCellClick(track, index, cell) {
+        const row = Math.floor(index / 12);
+        const col = index % 12;
+        const cellData = tracks[track].data[row][col];
+        const [trigger, velocity, preset] = cellData;
 
-    triggerInput.addEventListener('click', () => {
-        if (currentCell) {
-            currentCell.dataset.trigger = (parseInt(currentCell.dataset.trigger) + 1) % 2;
-            updateCellColor(currentCell);
-        }
-    });
+        document.getElementById('trigger').value = trigger;
+        document.getElementById('velocity').value = velocity;
+        document.getElementById('preset').value = preset;
 
-    velocityInput.addEventListener('click', () => {
-        if (currentCell) {
-            currentCell.dataset.velocity = (parseInt(currentCell.dataset.velocity) + 1) % 5;
-            updateCellColor(currentCell);
-        }
-    });
+        document.getElementById('trigger').onchange = (e) => updateCellData(track, row, col, 'trigger', e.target.value, cell);
+        document.getElementById('velocity').onchange = (e) => updateCellData(track, row, col, 'velocity', e.target.value, cell);
+        document.getElementById('preset').onchange = (e) => updateCellData(track, row, col, 'preset', e.target.value, cell);
+    }
 
-    presetInput.addEventListener('click', () => {
-        if (currentCell) {
-            currentCell.dataset.preset = (parseInt(currentCell.dataset.preset) + 1) % 8;
-            updateCellColor(currentCell);
+    function updateCellData(track, row, col, field, value, cell) {
+        let cellData = tracks[track].data[row][col];
+        if (field === 'trigger') {
+            value = (track === 'drum' ? (cellData[0] === 0 ? 1 : 0) : value);
+            cellData[0] = value;
+        } else if (field === 'velocity') {
+            cellData[1] = (parseInt(value) + 1) % 5;
+        } else if (field === 'preset') {
+            cellData[2] = (parseInt(value) + 1) % 8;
         }
-    });
+        tracks[track].data[row][col] = cellData;
+        updateCellDisplay(cell, cellData[0]);
+    }
 
-    add12Button.addEventListener('click', () => {
-        const instruments = ['drum', 'bass', 'synth', 'lead'];
-        instruments.forEach(instrument => {
-            const instrumentDiv = document.getElementById(instrument);
-            const rows = instrumentDiv.querySelectorAll(`.row[data-instrument="${instrument}"]`);
-            rows.forEach(row => {
-                for (let i = 0; i < 12; i++) {
+    function updateCellDisplay(cell, trigger) {
+        cell.textContent = trigger;
+        cell.classList.toggle('active', trigger !== 0);
+    }
+
+    document.getElementById('add-12').addEventListener('click', () => {
+        for (const track in tracks) {
+            const trackElement = document.querySelector(`[data-track=${track}]`);
+            const rows = tracks[track].rows;
+            const currentCols = tracks[track].data[0].length;
+
+            for (let i = 0; i < rows; i++) {
+                for (let j = currentCols; j < currentCols + 12; j++) {
                     const cell = document.createElement('div');
-                    cell.classList.add('cell', 'red');
-                    cell.dataset.key = 0;
-                    cell.dataset.trigger = 0;
-                    cell.dataset.velocity = 0;
-                    cell.dataset.preset = 0;
+                    cell.setAttribute('data-index', j);
                     cell.textContent = '0';
-                    cell.addEventListener('click', () => {
-                        currentCell = cell;
-                        keyInput.value = cell.dataset.key;
-                        triggerInput.value = cell.dataset.trigger;
-                        velocityInput.value = cell.dataset.velocity;
-                        presetInput.value = cell.dataset.preset;
-                    });
-                    row.appendChild(cell);
+                    cell.addEventListener('click', () => handleCellClick(track, j, cell));
+                    trackElement.querySelector('.grid').appendChild(cell);
                 }
-            });
-        });
+                tracks[track].data[i] = [...tracks[track].data[i], ...Array(12).fill([0, 0, 0])];
+            }
+            trackElement.querySelector('.grid').style.gridTemplateColumns = `repeat(${currentCols + 12}, 30px)`;
+        }
     });
 
-    exportButton.addEventListener('click', () => {
-        const instruments = ['drum', 'bass', 'synth', 'lead'];
-        const data = {};
-
-        instruments.forEach(instrument => {
-            const rows = [];
-            const instrumentDiv = document.getElementById(instrument);
-            const rowDivs = instrumentDiv.querySelectorAll(`.row[data-instrument="${instrument}"]`);
-            rowDivs.forEach(row => {
-                const cells = Array.from(row.querySelectorAll('.cell')).map(cell => {
-                    const key = parseInt(cell.dataset.key);
-                    const trigger = parseInt(cell.dataset.trigger);
-                    const velocity = parseInt(cell.dataset.velocity);
-                    const preset = parseInt(cell.dataset.preset);
-                    return [Math.max(key, trigger), velocity, preset];
-                });
-                rows.push(cells);
-            });
-            data[instrument] = rows;
-        });
-
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'data.txt';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+    document.getElementById('export').addEventListener('click', () => {
+        let exportData = '';
+        for (const track in tracks) {
+            exportData += `${track}\n`;
+            for (const row of tracks[track].data) {
+                exportData += JSON.stringify(row) + '\n';
+            }
+        }
+        const blob = new Blob([exportData], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'track-data.txt';
+        link.click();
     });
+
+    for (const track in tracks) {
+        createTrack(track, tracks[track].rows);
+    }
 });
