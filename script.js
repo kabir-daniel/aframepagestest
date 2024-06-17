@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const keyInput = document.getElementById('key');
     const triggerInput = document.getElementById('trigger');
-    const velocityInput = document.getElementById('velocity');
+    const velocityInput = document.getElementById('velocity'); 
     const presetInput = document.getElementById('preset');
     const add12Button = document.getElementById('add12');
     const exportButton = document.getElementById('export');
