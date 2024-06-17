@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const key = parseInt(cell.dataset.key);
         const trigger = parseInt(cell.dataset.trigger);
         const velocity = parseInt(cell.dataset.velocity);
-    
+
         if (key > 0 || trigger > 0) {
             cell.classList.remove('red');
             cell.classList.add('green');
@@ -64,10 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
             cell.classList.add('red');
             cell.style.backgroundColor = 'lightcoral';
         }
-    
+
         cell.textContent = Math.max(key, trigger);
     }
-
 
     keyInput.addEventListener('input', () => {
         if (currentCell) {
@@ -144,26 +143,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     exportButton.addEventListener('click', () => {
         const instruments = ['drum', 'bass', 'synth', 'lead'];
-        const data = {};
+        let exportText = '';
 
         instruments.forEach(instrument => {
-            const rows = [];
+            exportText += `${instrument}\n`;
             const instrumentDiv = document.getElementById(instrument);
             const rowDivs = instrumentDiv.querySelectorAll(`.row[data-instrument="${instrument}"]`);
             rowDivs.forEach(row => {
-                const cells = Array.from(row.querySelectorAll('.cell')).map(cell => {
+                const rowData = Array.from(row.querySelectorAll('.cell')).map(cell => {
                     const key = parseInt(cell.dataset.key);
                     const trigger = parseInt(cell.dataset.trigger);
                     const velocity = parseInt(cell.dataset.velocity);
                     const preset = parseInt(cell.dataset.preset);
-                    return [Math.max(key, trigger), velocity, preset];
-                });
-                rows.push(cells);
+                    return `[${Math.max(key, trigger)},${velocity},${preset}]`;
+                }).join(',');
+                exportText += `${rowData}\n`;
             });
-            data[instrument] = rows;
         });
 
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'text/plain' });
+        const blob = new Blob([exportText], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
