@@ -43,9 +43,6 @@ body, html {
     overflow-x: auto; /* Enable horizontal scrolling for each instrument */
 }
 
-.instrument {
-}
-
 .row {
     display: flex;
     flex-wrap: nowrap; /* Prevent wrapping of cells */
@@ -58,7 +55,6 @@ body, html {
     padding: 5px;
     text-align: center;
     cursor: pointer;
-    
 }
 
 .index-row .cell {
@@ -66,7 +62,7 @@ body, html {
     cursor: default;
     min-width: 40px;
     height: 25px; /* Match height of other cells */
-    font-size: 0.8; /* Reduce font size if necessary */
+    font-size: 0.8em; /* Reduce font size if necessary */
 }
 
 .cell.green {
@@ -75,4 +71,8 @@ body, html {
 
 .cell.red {
     background-color: lightcoral;
+}
+
+.cell.selected {
+    background-color: darkgoldenrod;
 }
