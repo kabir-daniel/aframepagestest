@@ -52,8 +52,8 @@ body, html {
 }
 
 .cell {
-    min-width: 50px; /* Fixed width for cells */
-    height: 30px; /* Adjust height for better ergonomics on mobile */
+    min-width: 40px; /* Fixed width for cells */
+    height: 25px; /* Adjust height for better ergonomics on mobile */
     border: 1px solid #ccc;
     padding: 5px;
     text-align: center;
@@ -64,8 +64,8 @@ body, html {
 .index-row .cell {
     background-color: #444;
     cursor: default;
-    width: 50px;
-    height: 30px; /* Match height of other cells */
+    min-width: 40px;
+    height: 25px; /* Match height of other cells */
     font-size: 0.8; /* Reduce font size if necessary */
 }
 
