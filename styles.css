@@ -3,7 +3,9 @@ body, html {
     padding: 0;
     box-sizing: border-box;
     font-family: Arial, sans-serif;
-} 
+    background-color: black;
+    color: white;
+}
 
 .top-bar {
     position: fixed;
@@ -39,6 +41,11 @@ body, html {
     margin-bottom: 20px;
 }
 
+.instrument h2 {
+    margin: 0 0 10px 0;
+    padding: 0;
+}
+
 .row {
     display: flex;
 }
@@ -54,6 +61,7 @@ body, html {
 .index-row .cell {
     background-color: #eee;
     cursor: default;
+    color: black;
 }
 
 .cell.green {
