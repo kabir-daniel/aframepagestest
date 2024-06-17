@@ -8,41 +8,28 @@
 </head>
 <body>
     <div class="top-bar">
-        <input type="text" id="key" placeholder="Key">
-        <input type="text" id="trigger" readonly placeholder="Trigger">
-        <input type="text" id="velocity" readonly placeholder="Velocity">
-        <input type="text" id="preset" readonly placeholder="Preset">
-        <button id="add12">Add 12</button>
+        <button id="add-12">Add 12</button>
         <button id="export">Export</button>
     </div>
-    <div class="scrollable">
-        <div class="instrument" id="drum">
-            <h2>Drum</h2>
-            <div class="row index-row"></div>
-            <div class="row" data-instrument="drum"></div>
-            <div class="row" data-instrument="drum"></div>
-            <div class="row" data-instrument="drum"></div>
-            <div class="row" data-instrument="drum"></div>
-            <div class="row" data-instrument="drum"></div>
-            <div class="row" data-instrument="drum"></div>
+    <div class="tracks-region">
+        <div id="drum-track" class="track" data-track="drum">
+            <h3>Drum Track</h3>
         </div>
-        <div class="instrument" id="bass">
-            <h2>Bass</h2>
-            <div class="row index-row"></div>
-            <div class="row" data-instrument="bass"></div>
+        <div id="bass-track" class="track" data-track="bass">
+            <h3>Bass Track</h3>
         </div>
-        <div class="instrument" id="synth">
-            <h2>Synth</h2>
-            <div class="row index-row"></div>
-            <div class="row" data-instrument="synth"></div>
-            <div class="row" data-instrument="synth"></div>
-            <div class="row" data-instrument="synth"></div>
-            <div class="row" data-instrument="synth"></div>
+        <div id="keys-track" class="track" data-track="keys">
+            <h3>Keys Track</h3>
         </div>
-        <div class="instrument" id="lead">
-            <h2>Lead</h2>
-            <div class="row index-row"></div>
-            <div class="row" data-instrument="lead"></div>
+        <div id="lead-track" class="track" data-track="lead">
+            <h3>Lead Track</h3>
+        </div>
+    </div>
+    <div class="bottom-bar">
+        <div class="info">
+            <div>Trigger: <input type="text" id="trigger"></div>
+            <div>Velocity: <input type="text" id="velocity"></div>
+            <div>Preset: <input type="text" id="preset"></div>
         </div>
     </div>
     <script src="script.js"></script>
