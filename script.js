@@ -77,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     triggerInput.addEventListener('click', () => {
         if (currentCell) {
             currentCell.dataset.trigger = (parseInt(currentCell.dataset.trigger) + 1) % 2;
+            triggerInput.value = currentCell.dataset.trigger; // Update displayed value
             updateCellColor(currentCell);
         }
     });
@@ -84,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     velocityInput.addEventListener('click', () => {
         if (currentCell) {
             currentCell.dataset.velocity = (parseInt(currentCell.dataset.velocity) + 1) % 5;
+            velocityInput.value = currentCell.dataset.velocity; // Update displayed value
             updateCellColor(currentCell);
         }
     });
@@ -91,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     presetInput.addEventListener('click', () => {
         if (currentCell) {
             currentCell.dataset.preset = (parseInt(currentCell.dataset.preset) + 1) % 8;
+            presetInput.value = currentCell.dataset.preset; // Update displayed value
             updateCellColor(currentCell);
         }
     });
