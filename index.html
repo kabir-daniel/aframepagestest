@@ -9,38 +9,42 @@
 <body>
     <div class="top-bar">
         <input type="text" id="key" placeholder="Key">
-        <input type="text" id="trigger" readonly placeholder="Trigger">
-        <input type="text" id="velocity" readonly placeholder="Velocity">
-        <input type="text" id="preset" readonly placeholder="Preset">
-        <button id="add12">Add 12</button>
+        <input type="text" id="trigger" placeholder="Trigger" readonly>
+        <input type="text" id="velocity" placeholder="Velocity" readonly>
+        <input type="text" id="preset" placeholder="Preset" readonly>
+        <button id="add-12">Add 12</button>
         <button id="export">Export</button>
     </div>
-    <div class="scrollable">
-        <div class="instrument" id="drum">
+    <div class="scrollable-section" id="scrollable-section">
+        <div class="grid" id="drum">
             <div class="row index-row"></div>
-            <div class="row" data-instrument="drum"></div>
-            <div class="row" data-instrument="drum"></div>
-            <div class="row" data-instrument="drum"></div>
-            <div class="row" data-instrument="drum"></div>
-            <div class="row" data-instrument="drum"></div>
-            <div class="row" data-instrument="drum"></div>
+            <!-- Add six rows for the drum track -->
+            <div class="row"></div>
+            <div class="row"></div>
+            <div class="row"></div>
+            <div class="row"></div>
+            <div class="row"></div>
+            <div class="row"></div>
         </div>
-        <div class="instrument" id="bass">
+        <div class="grid" id="bass">
             <div class="row index-row"></div>
-            <div class="row" data-instrument="bass"></div>
+            <!-- Add one row for the bass track -->
+            <div class="row"></div>
         </div>
-        <div class="instrument" id="synth">
+        <div class="grid" id="synth">
             <div class="row index-row"></div>
-            <div class="row" data-instrument="synth"></div>
-            <div class="row" data-instrument="synth"></div>
-            <div class="row" data-instrument="synth"></div>
-            <div class="row" data-instrument="synth"></div>
+            <!-- Add four rows for the synth track -->
+            <div class="row"></div>
+            <div class="row"></div>
+            <div class="row"></div>
+            <div class="row"></div>
         </div>
-        <div class="instrument" id="lead">
+        <div class="grid" id="lead">
             <div class="row index-row"></div>
-            <div class="row" data-instrument="lead"></div>
+            <!-- Add one row for the lead track -->
+            <div class="row"></div>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script src="scripts.js"></script>
 </body>
 </html>
