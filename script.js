@@ -65,20 +65,16 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('add-12').addEventListener('click', () => {
         for (const track in tracks) {
             const trackElement = document.querySelector(`[data-track=${track}]`);
-            const rows = tracks[track].rows;
-            const currentCols = tracks[track].data[0].length;
-
-            for (let i = 0; i < rows; i++) {
-                for (let j = currentCols; j < currentCols + 12; j++) {
+            for (let i = 0; i < tracks[track].rows; i++) {
+                for (let j = 0; j < 12; j++) {
                     const cell = document.createElement('div');
-                    cell.setAttribute('data-index', j);
+                    cell.setAttribute('data-index', tracks[track].data[i].length);
                     cell.textContent = '0';
-                    cell.addEventListener('click', () => handleCellClick(track, j, cell));
-                    trackElement.querySelector('.grid').appendChild(cell);
+                    cell.addEventListener('click', () => handleCellClick(track, tracks[track].data[i].length, cell));
+                    trackElement.appendChild(cell);
                 }
                 tracks[track].data[i] = [...tracks[track].data[i], ...Array(12).fill([0, 0, 0])];
             }
-            trackElement.querySelector('.grid').style.gridTemplateColumns = `repeat(${currentCols + 12}, 30px)`;
         }
     });
 
