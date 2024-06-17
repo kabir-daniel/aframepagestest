@@ -1,66 +1,118 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A-Frame Interactive Scene</title>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  </head>
-  <body>
-    <a-scene>
-      <a-assets>
-        <a-mixin id="square" geometry="primitive: box; height: 1; width: 1; depth: 1" material="color: blue"></a-mixin>
-        <a-mixin id="selected" material="color: yellow"></a-mixin>
-      </a-assets>
+    <title>Interactive Grid</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
 
-      <!-- Camera and Cursor -->
-      <a-entity id="camera" camera look-controls position="0 1.6 5">
-        <a-entity
-          cursor="fuse: false; rayOrigin: mouse"
-          position="0 0 -1"
-          geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
-          material="color: black; shader: flat"
-        ></a-entity>
-      </a-entity>
+        #grid-container {
+            display: grid;
+            grid-template-columns: repeat(10, 100px);
+            grid-template-rows: repeat(10, 100px);
+            gap: 1px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
 
-      <!-- Squares -->
-      <a-entity mixin="square" position="-1 1 0" class="clickable"></a-entity>
-      <a-entity mixin="square" position="1 1 0" class="clickable"></a-entity>
-      <a-entity mixin="square" position="-1 -1 0" class="clickable"></a-entity>
-      <a-entity mixin="square" position="1 -1 0" class="clickable"></a-entity>
+        .grid-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
 
-      <!-- Zoom Buttons -->
-      <a-entity id="zoom-in" geometry="primitive: plane; height: 0.5; width: 0.5" material="color: green" position="-2 3 -2" text="value: Zoom In; color: white" class="clickable"></a-entity>
-      <a-entity id="zoom-out" geometry="primitive: plane; height: 0.5; width: 0.5" material="color: red" position="-2 2 -2" text="value: Zoom Out; color: white" class="clickable"></a-entity>
+        .grid-item input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            text-align: center;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
 
-      <script>
-        // A-Frame scene
-        document.querySelectorAll('.clickable').forEach((entity) => {
-          entity.addEventListener('click', function () {
-            document.querySelectorAll('.clickable').forEach((el) => {
-              el.removeAttribute('mixin');
-              el.setAttribute('mixin', 'square');
-            });
-            this.setAttribute('mixin', 'selected');
-          });
-        });
+        .grid-item input:focus {
+            outline: none;
+        }
 
-        const camera = document.getElementById('camera');
-        const zoomInButton = document.getElementById('zoom-in');
-        const zoomOutButton = document.getElementById('zoom-out');
+        .controls {
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
 
-        zoomInButton.addEventListener('click', () => {
-          const position = camera.getAttribute('position');
-          if (position.z > 2) {
-            camera.setAttribute('position', { x: position.x, y: position.y, z: position.z - 1 });
-          }
-        });
+        .controls button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <button onclick="scrollGrid('up')">Up</button>
+        <button onclick="scrollGrid('down')">Down</button>
+        <button onclick="scrollGrid('left')">Left</button>
+        <button onclick="scrollGrid('right')">Right</button>
+    </div>
+    <div id="grid-container"></div>
 
-        zoomOutButton.addEventListener('click', () => {
-          const position = camera.getAttribute('position');
-          camera.setAttribute('position', { x: position.x, y: position.y, z: position.z + 1 });
-        });
-      </script>
-    </a-scene>
-  </body>
+    <script>
+        function createGrid(rows, cols) {
+            const container = document.getElementById('grid-container');
+            container.style.gridTemplateColumns = `repeat(${cols}, 100px)`;
+            container.style.gridTemplateRows = `repeat(${rows}, 100px)`;
+
+            for (let i = 0; i < rows * cols; i++) {
+                const gridItem = document.createElement('div');
+                gridItem.className = 'grid-item';
+                const input = document.createElement('input');
+                gridItem.appendChild(input);
+                container.appendChild(gridItem);
+            }
+        }
+
+        function scrollGrid(direction) {
+            const container = document.getElementById('grid-container');
+            const currentScroll = {
+                top: container.scrollTop,
+                left: container.scrollLeft
+            };
+            const scrollAmount = 100;
+
+            switch (direction) {
+                case 'up':
+                    container.scrollTo(currentScroll.left, currentScroll.top - scrollAmount);
+                    break;
+                case 'down':
+                    container.scrollTo(currentScroll.left, currentScroll.top + scrollAmount);
+                    break;
+                case 'left':
+                    container.scrollTo(currentScroll.left - scrollAmount, currentScroll.top);
+                    break;
+                case 'right':
+                    container.scrollTo(currentScroll.left + scrollAmount, currentScroll.top);
+                    break;
+            }
+        }
+
+        createGrid(50, 50); // Initialize a 50x50 grid
+    </script>
+</body>
 </html>
