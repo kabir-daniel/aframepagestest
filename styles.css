@@ -1,51 +1,65 @@
-body {
+body, html {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
     font-family: Arial, sans-serif;
 }
 
 .top-bar {
     position: fixed;
     top: 0;
+    left: 0;
     width: 100%;
-    display: flex;
-    justify-content: space-around;
     background-color: #333;
-    color: white;
+    color: #fff;
     padding: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
 }
 
-.top-bar input,
-.top-bar button {
-    flex: 1;
+.top-bar input {
+    width: 15%;
+    padding: 5px;
     margin: 0 5px;
-    padding: 10px;
 }
 
-.scrollable-section {
+.top-bar button {
+    padding: 5px 10px;
+    margin: 0 5px;
+}
+
+.scrollable {
     margin-top: 60px;
+    overflow-y: scroll;
+    height: calc(100vh - 60px);
     padding: 10px;
 }
 
-.grid {
+.instrument {
     margin-bottom: 20px;
 }
 
 .row {
     display: flex;
-    justify-content: space-around;
-    margin-bottom: 5px;
 }
 
-.index-row div {
-    background-color: #ccc;
-    padding: 10px;
-}
-
-.row div {
-    flex: 1;
+.cell {
+    width: calc(100% / 12);
+    border: 1px solid #ccc;
+    padding: 20px;
     text-align: center;
-    padding: 10px;
     cursor: pointer;
+}
+
+.index-row .cell {
+    background-color: #eee;
+    cursor: default;
+}
+
+.cell.green {
+    background-color: lightgreen;
+}
+
+.cell.red {
+    background-color: lightcoral;
 }
