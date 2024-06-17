@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const keyInput = document.getElementById('key');
     const triggerInput = document.getElementById('trigger');
-    const velocityInput = document.getElementById('velocity'); 
+    const velocityInput = document.getElementById('velocity');
     const presetInput = document.getElementById('preset');
     const add12Button = document.getElementById('add12');
     const exportButton = document.getElementById('export');
@@ -96,7 +96,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const instruments = ['drum', 'bass', 'synth', 'lead'];
         instruments.forEach(instrument => {
             const instrumentDiv = document.getElementById(instrument);
+            const indexRow = instrumentDiv.querySelector('.index-row');
             const rows = instrumentDiv.querySelectorAll(`.row[data-instrument="${instrument}"]`);
+
+            // Add 12 columns to index row
+            const indexCells = indexRow.querySelectorAll('.cell');
+            const lastIndex = indexCells.length;
+            for (let i = 1; i <= 12; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.textContent = lastIndex + i;
+                indexRow.appendChild(cell);
+            }
+
+            // Add 12 columns to each data row
             rows.forEach(row => {
                 for (let i = 0; i < 12; i++) {
                     const cell = document.createElement('div');
