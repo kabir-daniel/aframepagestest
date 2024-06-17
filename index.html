@@ -52,21 +52,19 @@
 <body>
     <div id="grid-container">
         <div class="grid-item" readonly>Trigger</div>
+        <div class="grid-item color-box" data-value="0" style="background-color: red;">0</div>
+        <div class="grid-item color-box" data-value="0" style="background-color: red;">0</div>
+        <!-- Repeat similar grid items for the rest of the columns in the first row (24 total including the first column) -->
+
         <div class="grid-item" readonly>Velocity</div>
+        <div class="grid-item color-box" data-value="0" style="background-color: darkred;">0</div>
+        <div class="grid-item color-box" data-value="0" style="background-color: darkred;">0</div>
+        <!-- Repeat similar grid items for the rest of the columns in the second row (24 total including the first column) -->
+
         <div class="grid-item" readonly>Preset</div>
-        <div class="grid-item color-box" data-value="0" style="background-color: red;">0</div>
-        <div class="grid-item color-box" data-value="0" style="background-color: red;">0</div>
-        <div class="grid-item color-box" data-value="1" style="background-color: green;">0</div>
-        <div class="grid-item color-box" data-value="1" style="background-color: green;">0</div>
-        <!-- Repeat similar grid items for the rest of the columns in the first row -->
-
-        <div class="grid-item color-box" data-value="0" style="background-color: darkred;">0</div>
-        <div class="grid-item color-box" data-value="0" style="background-color: darkred;">0</div>
-        <!-- Repeat similar grid items for the rest of the columns in the second row -->
-
         <div class="grid-item color-box" data-value="0" style="background-color: brown;">0</div>
         <div class="grid-item color-box" data-value="0" style="background-color: brown;">0</div>
-        <!-- Repeat similar grid items for the rest of the columns in the third row -->
+        <!-- Repeat similar grid items for the rest of the columns in the third row (24 total including the first column) -->
     </div>
 
     <script>
@@ -83,7 +81,7 @@
         document.querySelectorAll('.color-box').forEach(item => {
             item.addEventListener('click', () => {
                 let value = parseInt(item.getAttribute('data-value'));
-                let row = Array.from(item.parentNode.children).indexOf(item) % 3;
+                let row = Math.floor(Array.from(item.parentNode.children).indexOf(item) / 25);
                 value = (value + 1) % (row === 0 ? 2 : (row === 1 ? 5 : 8));
                 item.setAttribute('data-value', value);
                 item.textContent = value;
