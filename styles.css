@@ -37,11 +37,12 @@ body, html {
 
 .instrument {
     margin-bottom: 20px;
+    overflow-x: auto; /* Enable horizontal scrolling for each instrument */
 }
 
 .row {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* Prevent wrapping of cells */
 }
 
 .cell {
