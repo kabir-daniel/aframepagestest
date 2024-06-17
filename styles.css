@@ -41,14 +41,16 @@ body, html {
 
 .row {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .cell {
-    width: calc(100% / 12);
+    width: 50px; /* Fixed width for cells */
     border: 1px solid #ccc;
     padding: 20px;
     text-align: center;
     cursor: pointer;
+    box-sizing: border-box; /* Ensure padding and border are included in the width */
 }
 
 .index-row .cell {
