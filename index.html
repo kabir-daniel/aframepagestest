@@ -3,260 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DAW Composing Environment</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
-        }
-        #top-bar, #bottom-bar {
-            position: fixed;
-            left: 0;
-            right: 0;
-            background: #333;
-            color: white;
-            text-align: center;
-            padding: 10px;
-            z-index: 10;
-        }
-        #top-bar {
-            top: 0;
-        }
-        #bottom-bar {
-            bottom: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        #tracks-region {
-            position: absolute;
-            top: 50px;
-            bottom: 50px;
-            left: 0;
-            right: 0;
-            overflow: scroll;
-            background: #f0f0f0;
-            display: flex;
-            flex-direction: column;
-        }
-        .track {
-            display: flex;
-            margin: 5px;
-        }
-        .track-row {
-            display: flex;
-        }
-        .cell {
-            width: 50px;
-            height: 50px;
-            border: 1px solid #ccc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-        }
-        .cell.red {
-            background: red;
-        }
-        .cell.green {
-            background: green;
-        }
-        .track-label {
-            width: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .bottom-bar-item {
-            margin: 0 10px;
-        }
-        button {
-            margin: 0 5px;
-            padding: 5px 10px;
-        }
-    </style>
+    <title>Digital Audio Workstation</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<div id="top-bar">
-    <button onclick="addColumns(12)">Add 12</button>
-    <button onclick="exportData()">Export</button>
-</div>
-
-<div id="tracks-region"></div>
-
-<div id="bottom-bar">
-    <div class="bottom-bar-item">Track: <span id="track-name"></span></div>
-    <div class="bottom-bar-item">Trigger: <input type="text" id="trigger-value" readonly onclick="toggleTrigger()"></div>
-    <div class="bottom-bar-item">Velocity: <input type="text" id="velocity-value" readonly onclick="cycleVelocity()"></div>
-    <div class="bottom-bar-item">Preset: <input type="text" id="preset-value" readonly onclick="cyclePreset()"></div>
-</div>
-
-<script>
-    const tracksConfig = {
-        drum: 6,
-        bass: 1,
-        keys: 4,
-        lead: 1
-    };
-
-    const tracksData = {
-        drum: Array(tracksConfig.drum).fill([]).map(() => Array(12).fill({ trigger: 0, velocity: 0, preset: 0 })),
-        bass: [Array(12).fill({ trigger: 0, velocity: 0, preset: 0 })],
-        keys: Array(tracksConfig.keys).fill([]).map(() => Array(12).fill({ trigger: 0, velocity: 0, preset: 0 })),
-        lead: [Array(12).fill({ trigger: 0, velocity: 0, preset: 0 })]
-    };
-
-    let selectedCell = null;
-
-    function createTrack(trackName, rows) {
-        const trackContainer = document.createElement('div');
-        trackContainer.className = 'track';
-
-        for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
-            const trackRow = document.createElement('div');
-            trackRow.className = 'track-row';
-
-            for (let i = 0; i < tracksData[trackName][rowIndex].length; i++) {
-                const cell = document.createElement('div');
-                cell.className = 'cell red';
-                cell.dataset.track = trackName;
-                cell.dataset.row = rowIndex;
-                cell.dataset.index = i;
-                cell.innerText = '0';
-                cell.onclick = () => selectCell(cell);
-                trackRow.appendChild(cell);
-            }
-
-            trackContainer.appendChild(trackRow);
-        }
-
-        return trackContainer;
-    }
-
-    function loadTracks() {
-        const tracksRegion = document.getElementById('tracks-region');
-
-        for (const trackName in tracksConfig) {
-            const trackContainer = createTrack(trackName, tracksConfig[trackName]);
-            tracksRegion.appendChild(trackContainer);
-        }
-    }
-
-    function selectCell(cell) {
-        const trackName = cell.dataset.track;
-        const rowIndex = parseInt(cell.dataset.row);
-        const cellIndex = parseInt(cell.dataset.index);
-
-        selectedCell = { trackName, rowIndex, cellIndex };
-
-        const cellData = tracksData[trackName][rowIndex][cellIndex];
-        document.getElementById('track-name').innerText = trackName;
-        document.getElementById('trigger-value').value = cellData.trigger;
-        document.getElementById('velocity-value').value = cellData.velocity;
-        document.getElementById('preset-value').value = cellData.preset;
-    }
-
-    function updateCellDisplay(cell, cellData) {
-        cell.innerText = cellData.trigger;
-        if (cellData.trigger == 0) {
-            cell.className = 'cell red';
-        } else {
-            cell.className = 'cell green';
-        }
-    }
-
-    function toggleTrigger() {
-        if (!selectedCell) return;
-        const { trackName, rowIndex, cellIndex } = selectedCell;
-
-        if (trackName === 'drum') {
-            const newTrigger = tracksData[trackName][rowIndex][cellIndex].trigger === 0 ? 1 : 0;
-            tracksData[trackName][rowIndex][cellIndex].trigger = newTrigger;
-        }
-
-        updateSelectedCellDisplay();
-    }
-
-    function cycleVelocity() {
-        if (!selectedCell) return;
-        const { trackName, rowIndex, cellIndex } = selectedCell;
-
-        const currentVelocity = tracksData[trackName][rowIndex][cellIndex].velocity;
-        const newVelocity = (currentVelocity + 1) % 5;
-        tracksData[trackName][rowIndex][cellIndex].velocity = newVelocity;
-
-        updateSelectedCellDisplay();
-    }
-
-    function cyclePreset() {
-        if (!selectedCell) return;
-        const { trackName, rowIndex, cellIndex } = selectedCell;
-
-        const currentPreset = tracksData[trackName][rowIndex][cellIndex].preset;
-        const newPreset = (currentPreset + 1) % 8;
-        tracksData[trackName][rowIndex][cellIndex].preset = newPreset;
-
-        updateSelectedCellDisplay();
-    }
-
-    function updateSelectedCellDisplay() {
-        const { trackName, rowIndex, cellIndex } = selectedCell;
-        const cellData = tracksData[trackName][rowIndex][cellIndex];
-        document.getElementById('trigger-value').value = cellData.trigger;
-        document.getElementById('velocity-value').value = cellData.velocity;
-        document.getElementById('preset-value').value = cellData.preset;
-
-        const cell = document.querySelector(`.cell[data-track="${trackName}"][data-row="${rowIndex}"][data-index="${cellIndex}"]`);
-        updateCellDisplay(cell, cellData);
-    }
-
-    function addColumns(count) {
-        for (const trackName in tracksData) {
-            tracksData[trackName].forEach(row => {
-                for (let i = 0; i < count; i++) {
-                    row.push({ trigger: 0, velocity: 0, preset: 0 });
-                }
-            });
-        }
-
-        refreshTracks();
-    }
-
-    function refreshTracks() {
-        const tracksRegion = document.getElementById('tracks-region');
-        tracksRegion.innerHTML = '';
-
-        loadTracks();
-    }
-
-    function exportData() {
-        let exportText = '';
-
-        for (const trackName in tracksData) {
-            exportText += trackName + '\n';
-            tracksData[trackName].forEach(row => {
-                exportText += JSON.stringify(row.map(cell => [cell.trigger, cell.velocity, cell.preset])) + '\n';
-            });
-        }
-
-        const blob = new Blob([exportText], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'tracks_data.txt';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    }
-
-    window.onload = function() {
-        loadTracks();
-    }
-</script>
-
+    <div class="top-bar">
+        <button id="add-12">Add 12</button>
+        <button id="export">Export</button>
+    </div>
+    <div class="tracks-region">
+        <div id="drum-track" class="track" data-track="drum">
+            <h3>Drum Track</h3>
+        </div>
+        <div id="bass-track" class="track" data-track="bass">
+            <h3>Bass Track</h3>
+        </div>
+        <div id="keys-track" class="track" data-track="keys">
+            <h3>Keys Track</h3>
+        </div>
+        <div id="lead-track" class="track" data-track="lead">
+            <h3>Lead Track</h3>
+        </div>
+    </div>
+    <div class="bottom-bar">
+        <div class="info">
+            <div>Trigger: <input type="text" id="trigger"></div>
+            <div>Velocity: <input type="text" id="velocity"></div>
+            <div>Preset: <input type="text" id="preset"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
