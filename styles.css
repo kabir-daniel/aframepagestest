@@ -45,12 +45,8 @@ body, html {
     overflow-x: auto; /* Enable horizontal scrolling for each instrument */
 }
 
-.instrument.drum {
-    height: calc(100vh * 3 / 5); /* Top three-fifths of the screen for drum */
-}
-
-.instrument:not(.drum) {
-    height: calc(100vh * 1 / 5); /* Each of the remaining instruments takes up one-fifth */
+.instrument {
+    height: calc(100vh / 4 - 10px); /* Each instrument takes up one-fourth of the screen height */
 }
 
 .row {
