@@ -3,41 +3,53 @@ body, html {
     padding: 0;
     box-sizing: border-box;
     font-family: Arial, sans-serif;
+    background-color: black; /* Change background color to black */
+    color: #fff; /* Change text color to white for better visibility */
 }
 
 .top-bar {
     position: fixed;
     top: 0;
-    left: 0;
-    width: 100%;
+    right: 0; /* Move top bar to the right side */
+    width: 60px; /* Width to fit buttons and narrow text boxes */
     background-color: #333;
     color: #fff;
     padding: 10px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center items horizontally */
+    height: 100vh; /* Full height to make it a side bar */
 }
 
 .top-bar input {
-    width: 15%;
+    width: 50px; /* Width to fit 3 characters */
     padding: 5px;
-    margin: 0 5px;
+    margin: 5px 0;
 }
 
 .top-bar button {
     padding: 5px 10px;
-    margin: 0 5px;
+    margin: 5px 0;
 }
 
 .scrollable {
-    margin-top: 60px;
-    overflow-y: scroll;
-    height: calc(100vh - 60px);
+    margin-right: 80px; /* Account for the sidebar width */
     padding: 10px;
+    height: calc(100vh - 20px);
+    overflow-y: scroll; /* Vertical scrolling */
 }
 
 .instrument {
     margin-bottom: 20px;
     overflow-x: auto; /* Enable horizontal scrolling for each instrument */
+}
+
+.instrument.drum {
+    height: calc(100vh * 2 / 3); /* Top two-thirds of the screen for drum */
+}
+
+.instrument:not(.drum) {
+    height: calc(100vh * 1 / 3); /* Bottom third for other instruments */
 }
 
 .row {
@@ -47,15 +59,16 @@ body, html {
 
 .cell {
     width: 50px; /* Fixed width for cells */
+    height: 20px; /* Reduced height for better ergonomics on mobile */
     border: 1px solid #ccc;
-    padding: 20px;
+    padding: 5px; /* Reduced padding */
     text-align: center;
     cursor: pointer;
     box-sizing: border-box; /* Ensure padding and border are included in the width */
 }
 
 .index-row .cell {
-    background-color: #eee;
+    background-color: #444;
     cursor: default;
 }
 
