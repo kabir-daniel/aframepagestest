@@ -9,7 +9,8 @@ body, html {
 
 .top-bar {
     position: fixed;
-    top: 80;
+    top: 50%; /* Move top bar down halfway */
+    transform: translateY(-50%); /* Center vertically */
     right: 0; /* Move top bar to the right side */
     width: 60px; /* Width to fit buttons and narrow text boxes */
     background-color: #333;
@@ -18,7 +19,7 @@ body, html {
     display: flex;
     flex-direction: column; /* Stack items vertically */
     align-items: center; /* Center items horizontally */
-    height: 100vh; /* Full height to make it a side bar */
+    height: auto; /* Automatic height */
 }
 
 .top-bar input {
@@ -36,20 +37,20 @@ body, html {
     margin-right: 80px; /* Account for the sidebar width */
     padding: 10px;
     height: calc(100vh - 20px);
-    overflow-y: scroll; /* Vertical scrolling */
+    overflow-y: auto; /* Vertical scrolling */
 }
 
 .instrument {
-    margin-bottom: 10px;
+    margin-bottom: 5px; /* Reduce the spacing between instruments */
     overflow-x: auto; /* Enable horizontal scrolling for each instrument */
 }
 
 .instrument.drum {
-    height: calc(100vh * 2 / 3); /* Top two-thirds of the screen for drum */
+    height: calc(100vh * 2 / 5); /* Top two-fifths of the screen for drum */
 }
 
 .instrument:not(.drum) {
-    height: calc(100vh * 1 / 3); /* Bottom third for other instruments */
+    height: calc(100vh * 1 / 5); /* Each of the remaining instruments takes up one-fifth */
 }
 
 .row {
@@ -59,9 +60,9 @@ body, html {
 
 .cell {
     width: 50px; /* Fixed width for cells */
-    height: 35px; /* Reduced height for better ergonomics on mobile */
+    height: 30px; /* Adjust height for better ergonomics on mobile */
     border: 1px solid #ccc;
-    padding: 5px; /* Reduced padding */
+    padding: 5px;
     text-align: center;
     cursor: pointer;
     box-sizing: border-box; /* Ensure padding and border are included in the width */
@@ -70,6 +71,8 @@ body, html {
 .index-row .cell {
     background-color: #444;
     cursor: default;
+    height: 30px; /* Match height of other cells */
+    font-size: 0.8em; /* Reduce font size if necessary */
 }
 
 .cell.green {
